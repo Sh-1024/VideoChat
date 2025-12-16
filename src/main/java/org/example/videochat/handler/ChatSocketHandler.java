@@ -1,6 +1,8 @@
 package org.example.videochat.handler;
 
 import org.example.videochat.dto.SignalMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -18,6 +20,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @Component
 public class ChatSocketHandler extends TextWebSocketHandler {
     private final ObjectMapper objectMapper;
+    private static final Logger logger = LoggerFactory.getLogger(ChatSocketHandler.class);
+
     Map<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
 
     public ChatSocketHandler(ObjectMapper objectMapper) {
@@ -36,13 +40,13 @@ public class ChatSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         sessions.put(session.getId(), session); //issue with reconnection?
-        System.out.println("New Session: " + session.getId()); //change to normal log later
+        logger.info("Connected: " + session.getId());
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
         sessions.remove(session.getId(), session);
-        System.out.println("Closed Session: " + session.getId() + " with reason: " + status.getReason()); //change to normal log later
+        logger.info("Disconnected: " + session.getId() + " with status: " + status);
     }
 
     private void handleDirectMessage(SignalMessage directMessage) throws Exception {
@@ -50,7 +54,7 @@ public class ChatSocketHandler extends TextWebSocketHandler {
         WebSocketSession receiverSession = sessions.get(receiverId);
 
         if (receiverSession.isOpen()) {
-            System.out.println("ReceiverSession: " + receiverSession.getId()); // change to logs later
+            logger.debug("Receiver Session: " + receiverId);
             String message = objectMapper.writeValueAsString(directMessage);
             receiverSession.sendMessage(new TextMessage(message)); // thread issue, loopback issue?
         }
