@@ -33,8 +33,17 @@ public class ChatSocketHandler extends TextWebSocketHandler {
         String payload = message.getPayload();
         SignalMessage signalMessage = objectMapper.readValue(payload, SignalMessage.class);
 
-        //add message types?
-        handleDirectMessage(signalMessage);
+        switch (signalMessage.getMessageType()) {
+            case OFFER:
+            case ANSWER:
+            case NETWORK_PATH:
+                handleDirectMessage(signalMessage);
+                break;
+
+                default:
+                    logger.error("Unknown message type: {}", signalMessage.getMessageType());
+
+        }
     }
 
     @Override
@@ -59,6 +68,4 @@ public class ChatSocketHandler extends TextWebSocketHandler {
             receiverSession.sendMessage(new TextMessage(message)); // thread issue, loopback issue?
         }
     }
-
-
 }
