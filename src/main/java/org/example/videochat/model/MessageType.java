@@ -10,8 +10,26 @@ public enum MessageType {
     @JsonProperty("answer")
     ANSWER,
 
-    @JsonProperty("network_path") //rename to candidate?
+    @JsonProperty("network_path")
     NETWORK_PATH,
+
+    @JsonProperty("id_assigned")
+    ID_ASSIGNED,
+
+    @JsonProperty("hangup") // end call
+    HANGUP,
+
+    @JsonProperty("reject") //reject
+    REJECT,
+
+    @JsonProperty("ping") // connection check
+    PING,
+
+    @JsonProperty("pong") // server response for ping
+    PONG,
+
+    @JsonProperty("error")
+    ERROR,
 
     @JsonEnumDefaultValue
     UNKNOWN
