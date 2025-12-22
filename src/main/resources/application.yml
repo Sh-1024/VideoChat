@@ -1,3 +1,7 @@
 spring:
   application:
     name: VideoChat
+  task:
+    scheduling:
+      pool:
+        size: 4
