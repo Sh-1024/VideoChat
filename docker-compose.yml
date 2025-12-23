@@ -1,0 +1,6 @@
+services:
+  videochat-app:
+    build: .
+    container_name: videochat-server
+    ports:
+      - "8080:8080"
